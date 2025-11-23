@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { ShoppingCart, Menu } from 'lucide-react';
 import { useState } from 'react';
 
@@ -11,10 +12,16 @@ export default function Header() {
     <header className="bg-[#FDD835] shadow-md sticky top-0 z-[999]">
       <div className="container mx-auto px-6">
         <div className="flex justify-between items-center h-16">
-          {/* Logo - Left side with RC text logo */}
+          {/* Logo - Left side with RC image logo */}
           <Link href="/" className="flex items-center hover:opacity-80 transition-opacity">
-            <div className="relative w-12 h-12 flex items-center justify-center">
-              <span className="text-3xl font-black text-black">RC</span>
+            <div className="relative w-12 h-12">
+              <Image 
+                src="/images/logos/128.webp" 
+                alt="RC Logo" 
+                width={48} 
+                height={48}
+                className="object-contain"
+              />
             </div>
           </Link>
 
