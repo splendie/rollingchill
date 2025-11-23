@@ -9,7 +9,7 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="bg-[#FDD835] shadow-md sticky top-0 z-[999]">
+    <header className="bg-white shadow-md sticky top-0 z-[999]">
       <div className="container mx-auto px-6">
         <div className="flex justify-between items-center h-16">
           {/* Logo - Left side with RC image logo */}
@@ -80,7 +80,7 @@ export default function Header() {
 
       {/* Mobile Navigation */}
       {mobileMenuOpen && (
-        <nav className="md:hidden border-t border-yellow-600 bg-[#FDD835]">
+        <nav className="md:hidden border-t border-gray-200 bg-white">
           <ul className="px-6 py-4 space-y-3">
             <li>
               <Link href="/" className="block text-black hover:font-bold text-base py-2">
