@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { Product } from '../types/product';
 import { Package } from 'lucide-react';
 
@@ -31,8 +32,9 @@ export default function ProductGrid({ products }: ProductGridProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {products.map((product) => (
-        <div
+        <Link
           key={product.id}
+          href={`/products/${product.id}`}
           className="bg-white rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col group cursor-pointer"
         >
           {/* Product Image */}
@@ -65,7 +67,7 @@ export default function ProductGrid({ products }: ProductGridProps) {
               </p>
             </div>
           </div>
-        </div>
+        </Link>
       ))}
     </div>
   );
