@@ -97,9 +97,13 @@ export default function ProductsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      {/* Products Section with Sidebar */}
-      <section className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-gray-50">
+      {/* Yellow Header Banner */}
+      <div className="bg-yellow-400 py-16 text-center">
+        <h1 className="text-5xl font-bold text-gray-900">Our Products</h1>
+      </div>
+
+      <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar Filters */}
           <aside className="lg:w-80 flex-shrink-0">
@@ -153,7 +157,7 @@ export default function ProductsPage() {
             )}
           </div>
         </div>
-      </section>
-    </main>
+      </div>
+    </div>
   );
 }
