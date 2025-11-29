@@ -116,12 +116,18 @@ export default function ProductDetailPage() {
     <main className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8">
         {/* Breadcrumb */}
-        <nav className="flex items-center text-sm text-gray-600 mb-6">
-          <a href="/" className="hover:text-gray-900">Home</a>
-          <span className="mx-2">›</span>
-          <a href="/products" className="hover:text-gray-900">Products</a>
-          <span className="mx-2">›</span>
-          <span className="text-gray-900">{product.name}</span>
+        <nav aria-label="Breadcrumb">
+          <ol className="breadcrumb">
+            <li className="breadcrumb-item">
+              <a href="/">Home</a>
+            </li>
+            <li className="breadcrumb-item">
+              <a href="/products">Products</a>
+            </li>
+            <li className="breadcrumb-item active" aria-current="page">
+              {product.name}
+            </li>
+          </ol>
         </nav>
 
         {/* Back Button */}
