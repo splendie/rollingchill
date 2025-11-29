@@ -3,6 +3,17 @@ import { prisma } from '@/app/lib/prisma';
 
 export async function GET(request: NextRequest) {
   try {
+    // Debug: Check DATABASE_URL
+    const dbUrl = process.env.DATABASE_URL;
+    console.log('DATABASE_URL starts with:', dbUrl?.substring(0, 30));
+    
+    if (!dbUrl) {
+      return NextResponse.json(
+        { error: 'DATABASE_URL is not set' },
+        { status: 500 }
+      );
+    }
+
     const searchParams = request.nextUrl.searchParams;
     const category = searchParams.get('category');
     const colors = searchParams.get('colors')?.split(',').filter(Boolean);
