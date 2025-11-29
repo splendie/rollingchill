@@ -61,9 +61,15 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(products);
   } catch (error) {
+    // Log the full error for debugging
     console.error('Error fetching products:', error);
+    console.error('DATABASE_URL exists:', !!process.env.DATABASE_URL);
+
     return NextResponse.json(
-      { error: 'Failed to fetch products' },
+      {
+        error: 'Failed to fetch products',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
       { status: 500 }
     );
   }
