@@ -11,20 +11,37 @@ const colorMap: Record<string, { name: string; hex: string }> = {
   yellow: { name: 'Yellow', hex: '#FDD835' },
   white: { name: 'White', hex: '#FFFFFF' },
   black: { name: 'Black', hex: '#000000' },
-  green: { name: 'Green', hex: '#4CAF50' },
-  sage: { name: 'Sage', hex: '#9E9E9E' },
-  red: { name: 'Red', hex: '#D32F2F' },
-  brown: { name: 'Brown', hex: '#5D4037' },
+  blue: { name: 'Blue Sky', hex: '#87CEEB' },
+  brown: { name: 'Brown', hex: '#8B4513' },
+  greeniris: { name: 'Green Iris', hex: '#90EE90' },
+  greenneon: { name: 'Green Neon', hex: '#39FF14' },
+  grey: { name: 'Grey', hex: '#808080' },
+  orange: { name: 'Orange', hex: '#FF8C00' },
+  pink: { name: 'Pink', hex: '#FFB6C1' },
+  purple: { name: 'Purple', hex: '#9370DB' },
+  red: { name: 'Red', hex: '#DC143C' },
+  rosepink: { name: 'Rose Pink', hex: '#FF66B2' },
 };
+
+interface ProductImage {
+  id: string;
+  color: string;
+  colorName: string;
+  frontImageUrl: string;
+  backImageUrl: string;
+  displayOrder: number;
+}
 
 export default function ProductDetailPage() {
   const params = useParams();
   const router = useRouter();
   const [product, setProduct] = useState<Product | null>(null);
+  const [productImages, setProductImages] = useState<ProductImage[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<string>('');
   const [selectedColor, setSelectedColor] = useState<string>('');
+  const [viewSide, setViewSide] = useState<'front' | 'back'>('front');
 
   useEffect(() => {
     async function fetchProduct() {
@@ -38,13 +55,24 @@ export default function ProductDetailPage() {
         }
         const data = await response.json();
         setProduct(data);
+        
+        // Fetch product images
+        const imagesResponse = await fetch(`/api/products/${params.id}/images`);
+        if (imagesResponse.ok) {
+          const imagesData = await imagesResponse.json();
+          setProductImages(imagesData);
+          
+          // Set default color to first available image color
+          if (imagesData.length > 0) {
+            setSelectedColor(imagesData[0].color);
+          }
+        }
+        
         // Set default selections
         if (data.sizes && data.sizes.length > 0) {
           setSelectedSize(data.sizes[0]);
         }
-        if (data.colors && data.colors.length > 0) {
-          setSelectedColor(data.colors[0]);
-        }
+        
         setError(null);
       } catch (err) {
         console.error('Error fetching product:', err);
@@ -65,6 +93,27 @@ export default function ProductDetailPage() {
       currency: 'IDR',
       minimumFractionDigits: 0,
     }).format(price);
+  };
+
+  // Get current image based on selected color and view side
+  const getCurrentImage = () => {
+    const colorImage = productImages.find((img) => img.color === selectedColor);
+    if (colorImage) {
+      return viewSide === 'front' ? colorImage.frontImageUrl : colorImage.backImageUrl;
+    }
+    return product?.image || '';
+  };
+
+  // Get thumbnail images for current color
+  const getThumbnails = () => {
+    const colorImage = productImages.find((img) => img.color === selectedColor);
+    if (colorImage) {
+      return [
+        { side: 'front' as const, url: colorImage.frontImageUrl },
+        { side: 'back' as const, url: colorImage.backImageUrl },
+      ];
+    }
+    return [{ side: 'front' as const, url: product?.image || '' }];
   };
 
   if (loading) {
@@ -143,14 +192,39 @@ export default function ProductDetailPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Product Image */}
           <div className="bg-white rounded-lg p-8">
-            <div className="relative aspect-square">
+            {/* Main Image */}
+            <div className="relative aspect-square mb-4">
               <Image
-                src={product.image}
-                alt={product.name}
+                src={getCurrentImage()}
+                alt={`${product.name} - ${viewSide}`}
                 fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-contain"
                 priority
               />
+            </div>
+            
+            {/* Thumbnail Images (Front/Back) */}
+            <div className="flex gap-3 mt-4">
+              {getThumbnails().map((thumbnail) => (
+                <button
+                  key={thumbnail.side}
+                  onClick={() => setViewSide(thumbnail.side)}
+                  className={`relative w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
+                    viewSide === thumbnail.side
+                      ? 'border-blue-500 ring-2 ring-blue-500 ring-offset-2'
+                      : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                >
+                  <Image
+                    src={thumbnail.url}
+                    alt={`${thumbnail.side} view`}
+                    fill
+                    sizes="80px"
+                    className="object-cover"
+                  />
+                </button>
+              ))}
             </div>
           </div>
 
@@ -168,7 +242,9 @@ export default function ProductDetailPage() {
             {/* Colors */}
             {product.colors && product.colors.length > 0 && (
               <div>
-                <h3 className="text-sm font-semibold text-gray-900 mb-3">Color</h3>
+                <h3 className="text-sm font-semibold text-gray-900 mb-3">
+                  Color: {colorMap[selectedColor]?.name || selectedColor}
+                </h3>
                 <div className="flex gap-3">
                   {product.colors.map((color) => {
                     const colorInfo = colorMap[color] || { name: color, hex: '#CCCCCC' };
@@ -176,7 +252,7 @@ export default function ProductDetailPage() {
                       <button
                         key={color}
                         onClick={() => setSelectedColor(color)}
-                        className={`w-10 h-10 rounded-full border-2 transition-all ${
+                        className={`w-12 h-12 rounded-full border-2 transition-all ${
                           selectedColor === color
                             ? 'border-yellow-400 ring-2 ring-yellow-400 ring-offset-2'
                             : 'border-gray-300 hover:border-gray-400'
@@ -241,7 +317,6 @@ export default function ProductDetailPage() {
               <button
                 className="w-full bg-black text-white py-4 rounded-lg font-semibold hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
                 onClick={() => {
-                  // TODO: Implement add to cart functionality
                   alert(`Added ${product.name} (${selectedSize}, ${selectedColor}) to cart!`);
                 }}
               >

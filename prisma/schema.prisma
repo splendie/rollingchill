@@ -8,17 +8,33 @@ datasource db {
 }
 
 model Product {
-  id          String   @id @default(cuid())
+  id          String         @id @default(cuid())
   name        String
   description String?
   price       Int
-  image       String
+  image       String // Keep as fallback/thumbnail
   category    String
-  inStock     Boolean  @default(true)
-  isNew       Boolean  @default(false)
+  inStock     Boolean        @default(true)
+  isNew       Boolean        @default(false)
   colors      String?
   sizes       String?
   materials   String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  images      ProductImage[] // Relation to images
+}
+
+model ProductImage {
+  id            String   @id @default(cuid())
+  productId     String
+  product       Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  color         String   // Color value (e.g., 'yellow', 'white')
+  colorName     String   // Display name (e.g., 'Yellow', 'White')
+  frontImageUrl String   // Front image URL
+  backImageUrl  String   // Back image URL
+  displayOrder  Int      @default(0) // Order for display
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([productId])
 }
