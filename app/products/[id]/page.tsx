@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { ChevronLeft, Ruler } from 'lucide-react';
 import { Product } from '@/app/types/product';
 import Image from 'next/image';
+import SizeChartModal from '@/app/components/SizeChartModal';
 
 // Color mapping for display
 const colorMap: Record<string, { name: string; hex: string }> = {
@@ -42,6 +43,7 @@ export default function ProductDetailPage() {
   const [selectedSize, setSelectedSize] = useState<string>('');
   const [selectedColor, setSelectedColor] = useState<string>('');
   const [viewSide, setViewSide] = useState<'front' | 'back'>('front');
+  const [showSizeChart, setShowSizeChart] = useState(false);
 
   useEffect(() => {
     async function fetchProduct() {
@@ -281,7 +283,10 @@ export default function ProductDetailPage() {
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-sm font-semibold text-gray-900">Size</h3>
-                  <button className="flex items-center text-sm text-yellow-600 hover:text-yellow-700">
+                  <button 
+                    onClick={() => setShowSizeChart(true)}
+                    className="flex items-center text-sm text-yellow-600 hover:text-yellow-700 transition-colors"
+                  >
                     <Ruler className="w-4 h-4 mr-1" />
                     Size Chart
                   </button>
@@ -337,6 +342,9 @@ export default function ProductDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* Size Chart Modal */}
+      <SizeChartModal isOpen={showSizeChart} onClose={() => setShowSizeChart(false)} />
     </main>
   );
 }
