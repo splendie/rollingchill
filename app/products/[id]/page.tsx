@@ -296,10 +296,10 @@ export default function ProductDetailPage() {
                     <button
                       key={size}
                       onClick={() => setSelectedSize(size)}
-                      className={`px-6 py-3 border-2 rounded-lg font-medium transition-all ${
+                      className={`px-6 py-3 border rounded-lg font-medium transition-all ${
                         selectedSize === size
                           ? 'border-gray-900 bg-gray-900 text-white'
-                          : 'border-gray-300 hover:border-gray-400'
+                          : 'border-gray-300 bg-white text-gray-900 hover:border-gray-400'
                       }`}
                     >
                       {size}
