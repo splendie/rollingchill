@@ -6,6 +6,7 @@ import { ChevronLeft, Ruler } from 'lucide-react';
 import { Product } from '@/app/types/product';
 import Image from 'next/image';
 import SizeChartModal from '@/app/components/SizeChartModal';
+import { useCart } from '@/app/context/CartContext';
 
 // Color mapping for display
 const colorMap: Record<string, { name: string; hex: string }> = {
@@ -36,6 +37,7 @@ interface ProductImage {
 export default function ProductDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const { addToCart } = useCart();
   const [product, setProduct] = useState<Product | null>(null);
   const [productImages, setProductImages] = useState<ProductImage[]>([]);
   const [loading, setLoading] = useState(true);
@@ -116,6 +118,22 @@ export default function ProductDetailPage() {
       ];
     }
     return [{ side: 'front' as const, url: product?.image || '' }];
+  };
+
+  const handleAddToCart = () => {
+    if (!product) return;
+    
+    addToCart({
+      productId: product.id,
+      name: product.name,
+      price: product.price,
+      size: selectedSize,
+      color: selectedColor,
+      image: getCurrentImage(),
+    });
+    
+    // Show success message
+    alert(`Added ${product.name} to cart!`);
   };
 
   if (loading) {
@@ -321,9 +339,7 @@ export default function ProductDetailPage() {
             <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-4 lg:relative lg:border-0 lg:p-0">
               <button
                 className="w-full bg-black text-white py-4 rounded-lg font-semibold hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
-                onClick={() => {
-                  alert(`Added ${product.name} (${selectedSize}, ${selectedColor}) to cart!`);
-                }}
+                onClick={handleAddToCart}
               >
                 🛒 Add to Cart - {formatPrice(product.price)}
               </button>

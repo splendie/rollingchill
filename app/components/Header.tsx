@@ -4,12 +4,15 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ShoppingCart, Menu } from 'lucide-react';
 import { useState } from 'react';
+import { useCart } from '@/app/context/CartContext';
 
 export default function Header() {
+  const { getTotalItems } = useCart();
+  const totalItems = getTotalItems();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="bg-white shadow-md sticky top-0 z-[999]">
+    <header className="bg-white shadow-sm sticky top-0 z-50">
       <div className="container mx-auto px-6">
         <div className="flex justify-between items-center h-16">
           {/* Logo - Left side with RC image logo */}
@@ -59,8 +62,13 @@ export default function Header() {
 
           {/* Right side - Cart and Join button */}
           <div className="flex items-center space-x-4">
-            <Link href="/cart" className="text-red-500 hover:text-red-600 transition-colors">
-              <ShoppingCart className="w-6 h-6" strokeWidth={2} />
+            <Link href="/cart" className="relative">
+              <ShoppingCart className="w-6 h-6" />
+              {totalItems > 0 && (
+                <span className="absolute -top-2 -right-2 bg-yellow-400 text-black text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                  {totalItems}
+                </span>
+              )}
             </Link>
             <Link
               href="/login"
